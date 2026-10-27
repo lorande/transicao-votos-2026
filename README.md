@@ -21,6 +21,13 @@ possa replicar e validar.
   de 2% de cada grupo. Cerca de um quarto a um terço repetiu o voto branco ou nulo.
 - **Abstenção do 1º turno:** 86,8% continuou se abstendo;
   9,5% votou no Lula e 2,3% no Flávio.
+- **A virada foi decidida pela mobilização.** O Flávio terminou o 1º turno 2,22 mi à frente e perdeu o 2º
+  por 4,43 mi. Da virada, 6,05 mi vêm de quem não tinha votado em candidato no 1º turno (abstenção,
+  brancos e nulos, saldo Lula − Flávio) e só 0,40 mi dos eleitores de outros candidatos. A conclusão vale
+  também no modelo sobre municípios (ver [Conclusões e hipóteses](#conclusões-e-hipóteses)).
+- **Os eleitores novos seguiram a inclinação política do lugar:** onde o Flávio era fraco, quase todos foram para o
+  Lula; onde era forte, ele levou a maior parte. Houve mais eleitores novos onde o Lula era forte (ver
+  [Eleitores novos](#eleitores-novos)).
 - **O que é robusto:** estimando sobre municípios em vez de seções, a direção de todos os fluxos é a mesma.
   Muda o tamanho de alguns: sobre municípios, Outros → Lula sobe para 52,6%
   e Abstenção → Lula cai para 6,7%. O modelo sobre seções é o mais
@@ -319,6 +326,119 @@ pequenos com estimativas bem determinadas, aparecem para comparação.
 - **Efeito no Brasil:** os três estados somam 1,0% dos votos em outros candidatos; a incerteza
   deles já está incluída no intervalo nacional.
 
+## Eleitores novos
+
+Uma conta mais simples, sem modelo de transição, sobre todas as 499.248 seções:
+
+- **x (eleitores novos em candidato)** = votos em candidato no 2º turno (Lula + Flávio) − votos em candidato no
+  1º turno (Lula + Flávio + Outros) = aumento do comparecimento + queda de brancos e nulos.
+- **y** = votos que o candidato ganhou entre os turnos.
+
+Cada ponto do gráfico é a média das seções com o mesmo x; a reta e o r são calculados sobre todas as seções (para x
+inteiro, a reta das médias ponderadas pelo número de seções é a mesma). O r das médias seria quase 1 e não mede
+quanto x explica o ganho de cada seção; o que vale é o r sobre as seções.
+
+| | Ganho total | Ganho sem a parcela de Outros |
+|---|---|---|
+| **Lula** | y = 0,729·x + 13,81 · r = 0,72 | y = 0,716·x + 6,02 · r = 0,80 |
+| **Flávio** | y = 0,340·x + 4,20 · r = 0,43 | y = 0,320·x − 2,72 · r = 0,51 |
+
+![Ganho × eleitores novos](saida/novos_votantes.png)
+
+**Sem a parcela de Outros:** de cada seção sai a parcela que veio de outros candidatos, estimada pela fração Outros →
+candidato da matriz do estado × votos em Outros na seção no 1º turno.
+
+![Ganho sem a parcela de Outros × eleitores novos](saida/novos_votantes_sem_outros.png)
+
+- **Inclinação:** cada eleitor novo rendeu em média cerca de 0,7 voto ao Lula e
+  0,3 ao Flávio, com ou sem a parcela de Outros — a relação com os eleitores
+  novos não vem da transferência de outros candidatos.
+- **Intercepto:** numa seção sem eleitores novos, tirada a parcela de Outros, o Lula ainda ganha cerca de
+  6 votos e o Flávio perde cerca de 3
+  (perdas para abstenção, brancos e nulos e trocas entre os dois).
+- **Conferência sem a matriz:** a regressão múltipla ganho ~ x + votos em Outros dá
+  0,69·x + 0,50·Outros para o
+  Lula e 0,31·x + 0,50·Outros
+  para o Flávio. As inclinações em x batem. Os coeficientes de Outros somam 1 por construção (os ganhos dos dois somam
+  x + Outros), por isso não são comparáveis às frações da matriz.
+
+### Teste: o achatamento do Flávio é geográfico?
+
+Nos gráficos acima, o ganho do Flávio para de crescer a partir de uns 15 eleitores novos. Para testar se isso é um
+"teto" ou efeito de mistura de lugares diferentes, as seções foram divididas em cinco faixas de força do Flávio no
+1º turno (% do eleitorado), e cada faixa ganhou sua própria curva; e foi estimada uma curva livre (uma indicadora
+para cada valor de x) com efeito fixo de estado e força de Lula e Flávio no 1º turno.
+
+![Teste do achatamento do Flávio](saida/teste_teto_flavio.png)
+
+| Força do Flávio no 1º turno | Seções | Eleitores novos (média) | Seções com x ≥ 20 | Inclinação Flávio | Inclinação Lula | Votos Flávio | Votos Lula |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 0–24% | 99.241 | 11,1 | 23% | 0,17 | 0,87 | -91 mil | 1,38 mi |
+| 24–32% | 99.254 | 12,1 | 23% | 0,29 | 0,77 | -21 mil | 1,59 mi |
+| 32–39% | 99.237 | 10,4 | 16% | 0,38 | 0,67 | 48 mil | 1,41 mi |
+| 39–46% | 99.241 | 8,4 | 10% | 0,48 | 0,56 | 89 mil | 1,17 mi |
+| 46–92% | 99.228 | 6,1 | 5% | 0,59 | 0,46 | 0,17 mi | 0,84 mi |
+| **Total** | 496.201 | | | | | **0,19 mi** | **6,39 mi** |
+
+Votos = ganho sem a parcela de Outros somado nas seções da faixa (a integral da curva ponderada pelo número de seções).
+
+- **Dentro de cada faixa a curva é quase reta.** O achatamento (inclinação entre x = 15 e 40 dividida pela de 0 a 15;
+  1 = reta) fica entre 0,89 e 1,14 nas 3 faixas com dados suficientes até
+  x = 40, contra 0,44 na curva nacional.
+- **A inclinação do Flávio cresce com a força dele no lugar,** de 0,17 a
+  0,59; a do Lula cai de 0,87 a
+  0,46. Com interação, a inclinação do Flávio é
+  -0,022 + 0,0106 × força do Flávio (%).
+- **Houve mais eleitores novos onde o Flávio era fraco:** seções com 20 ou mais eleitores novos são
+  5 vezes mais comuns na faixa mais fraca dele do que
+  na mais forte. Nos x altos a média nacional é dominada por esses lugares, e a curva achata.
+- **Os controles aditivos não removem o achatamento** (0,54), porque só deslocam a curva
+  — o que muda entre os lugares é a inclinação.
+- **Integrais das curvas relativas a x = 0** (votos associados aos eleitores novos): Lula
+  3,46 mi sem controles e 3,08 mi com controles; Flávio
+  1,47 mi e 1,61 mi. Somados, ficam perto do total de
+  eleitores novos nessas seções.
+
+**Conclusão do teste:** não há um teto do Flávio em cada lugar; o achatamento é efeito de mistura. Os eleitores novos
+seguiram a inclinação política do lugar, e houve mais deles onde o Lula era forte.
+
+## Conclusões e hipóteses
+
+**Fatos (aritmética dos resultados oficiais):**
+
+- Lula ganhou 10,38 mi; Flávio, 3,72 mi. Os outros candidatos tinham
+  9,32 mi no 1º turno, então ao menos 4,78 mi
+  do ganho somado vieram de quem não tinha votado em candidato no 1º turno.
+- A diferença virou de 2,22 mi para o Flávio no 1º turno para 4,43 mi para o Lula no 2º.
+
+**O que o modelo indica com boa confiança — decomposição da virada:**
+
+| Origem | Modelo sobre seções | Modelo sobre municípios |
+|---|---:|---:|
+| Abstenção, brancos e nulos do 1º turno (Lula − Flávio) | 6,05 mi (6,95 mi − 0,90 mi) | 5,01 mi |
+| Eleitores de outros candidatos (Lula − Flávio) | 0,40 mi | 1,56 mi |
+| Perdas e trocas entre os dois | 0,16 mi | 24 mil |
+| **Virada total (estimada)** | **6,61 mi** | **6,59 mi** |
+
+- **A mobilização de quem não tinha votado em candidato decidiu a eleição** nos dois modelos. Mantidas as demais
+  parcelas, sem ela o Flávio teria terminado 1,67 mi à frente (modelo sobre seções).
+- Os eleitores de outros candidatos se dividiram quase ao meio, com forte padrão regional.
+- As bases foram estáveis: cerca de 99% dos eleitores de cada candidato no 1º turno repetiram o voto.
+
+**Hipóteses (plausíveis, não testadas):**
+
+1. **Mobilização de comparecimento nos redutos do Lula** — o ganho extra veio onde o comparecimento mais subiu; o dado
+   não diz se por campanha, rejeição ao adversário ou outro motivo.
+2. **Parte dos nulos do 1º turno era voto "errado" do Lula** — com seis votos na urna, o nulo para presidente tende a
+   ser maior onde o Lula é forte; com um voto só no 2º turno, esse eleitor teria acertado. Teste possível: comparar
+   o nulo para presidente com o nulo para outros cargos na mesma seção.
+3. **Os eleitores de outros candidatos seguiram a geografia, não o candidato** — a divisão acompanha a região.
+
+A hipótese do "teto do Flávio" foi testada e descartada (ver o teste acima).
+
+**O que não dá para concluir:** comportamento individual (é inferência ecológica), rotatividade (os fluxos são
+líquidos) e causas.
+
 ## Sensibilidade
 
 Brasil, % da linha, variando o peso que puxa cada matriz estadual para a da região (lam, em observações médias;
@@ -378,6 +498,9 @@ python -X utf8 -E -P transicao_uf.py saida/ 200 5 municipio     # modelo por est
 python -X utf8 -E -P secao_base.py                              # baixa os dados por seção e monta a base
 python -X utf8 -E -P transicao_uf.py saida/ 200 5 secao         # modelo principal
 python -X utf8 -E -P grafico_fluxos.py saida/ secao             # diagrama de fluxos (também: municipio)
+python -X utf8 -E -P grafico_novos_votantes.py saida/ bruto      # ganho × eleitores novos
+python -X utf8 -E -P grafico_novos_votantes.py saida/ sem_outros # idem, sem a parcela de Outros
+python -X utf8 -E -P teste_teto_flavio.py saida/                # teste do achatamento do Flávio
 python -X utf8 -E -P gera_relatorio.py                          # este README
 python -X utf8 -E -P validar.py                                 # confere os resultados
 ```
@@ -394,6 +517,8 @@ refaz os ajustes e confere a coerência de todos os resultados publicados.
 | `transicao_uf.py` | modelo por estado (sobre municípios ou seções), agregado para o Brasil, e gráficos |
 | `secao_base.py` | baixa os dados abertos por seção e monta a base dos dois turnos |
 | `grafico_fluxos.py` | diagrama de fluxos entre os turnos a partir dos fluxos nacionais |
+| `grafico_novos_votantes.py` | ganho de cada candidato × eleitores novos, por seção (`saida/novos_votantes*`) |
+| `teste_teto_flavio.py` | teste do achatamento do Flávio por faixa de força e com controles (`saida/teste_teto_flavio*`) |
 | `gera_relatorio.py` | gera este README a partir de `saida/` |
 | `validar.py` | confere os resultados publicados |
 | `saida/transicao_secoes.csv.gz`, `saida/transicao_municipios.csv` | bases por seção e por município |
