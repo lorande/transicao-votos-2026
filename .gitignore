@@ -1,0 +1,9 @@
+# dados brutos do TSE: os scripts baixam da fonte oficial
+dados_secao/
+tse_1t_json/
+tse_2t_json/
+*.parcial
+
+__pycache__/
+*.pyc
+.venv/

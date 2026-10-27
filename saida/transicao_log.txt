@@ -1,0 +1,96 @@
+turno 1: maior diferença entre soma dos grupos e eleitorado num município = 29
+turno 2: maior diferença entre soma dos grupos e eleitorado num município = 29
+
+totais 1º turno: {'Lula': 53879538, 'Flávio': 56104503, 'Outros': 9316747, 'Brancos': 2300798, 'Nulos': 3674249, 'Abstenção': 33469244}
+totais 2º turno: {'Lula': 64256232, 'Flávio': 59826041, 'Brancos': 1430496, 'Nulos': 2723305, 'Abstenção': 30509005}
+
+R² por região e grupo do 2º turno (quanto da variação entre municípios o modelo explica):
+           Lula  Flávio  Brancos  Nulos  Abstenção
+CO        0.981   0.979   -0.011  0.221      0.846
+Exterior  0.969   0.980    0.529  0.668      0.958
+N         0.984   0.977    0.637  0.023      0.577
+NE        0.971   0.989    0.070  0.345      0.715
+S         0.989   0.994    0.668  0.674      0.944
+SE        0.987   0.987    0.602  0.477      0.882
+
+BRASIL, transição em % de cada grupo do 1º turno (intervalo 90% do bootstrap entre colchetes):
+  Lula           Lula:  99.3 [99.0-99.6]  Flávio:   0.0 [ 0.0- 0.0]  Brancos:   0.1 [ 0.0- 0.2]  Nulos:   0.2 [ 0.0- 0.3]  Abstenção:   0.4 [ 0.3- 0.8]
+  Flávio         Lula:   0.0 [ 0.0- 0.0]  Flávio:  99.5 [99.1-99.8]  Brancos:   0.1 [ 0.0- 0.2]  Nulos:   0.1 [ 0.0- 0.3]  Abstenção:   0.3 [ 0.0- 0.6]
+  Outros         Lula:  48.5 [46.3-50.9]  Flávio:  40.3 [37.7-41.9]  Brancos:   2.9 [ 1.8- 4.2]  Nulos:   7.8 [ 6.3- 9.1]  Abstenção:   0.5 [ 0.1- 1.4]
+  Brancos        Lula:  70.7 [61.9-79.5]  Flávio:   0.1 [ 0.0- 2.9]  Brancos:  26.2 [19.3-30.9]  Nulos:   1.5 [ 0.0- 6.5]  Abstenção:   1.4 [ 0.1- 3.0]
+  Nulos          Lula:  63.0 [56.1-68.1]  Flávio:   0.9 [ 0.0- 3.5]  Brancos:   0.9 [ 0.0- 2.3]  Nulos:  33.2 [28.6-38.0]  Abstenção:   2.0 [ 0.6- 4.0]
+  Abstenção      Lula:   6.9 [ 5.9- 7.9]  Flávio:   0.6 [ 0.2- 1.4]  Brancos:   1.2 [ 0.9- 1.7]  Nulos:   1.7 [ 1.3- 2.2]  Abstenção:  89.6 [88.3-90.4]
+
+BRASIL, fluxos em milhões de eleitores:
+            Lula  Flávio  Brancos  Nulos  Abstenção
+Lula       53.51    0.00     0.04   0.09       0.24
+Flávio      0.00   55.85     0.05   0.06       0.15
+Outros      4.52    3.75     0.27   0.72       0.04
+Brancos     1.63    0.00     0.60   0.03       0.03
+Nulos       2.32    0.03     0.03   1.22       0.07
+Abstenção   2.29    0.21     0.41   0.57      29.99
+
+conferência: 2º turno estimado x real (milhões):
+           estimado    real
+Lula         64.271  64.256
+Flávio       59.851  59.826
+Brancos       1.408   1.430
+Nulos         2.698   2.723
+Abstenção    30.516  30.509
+
+ganho do Lula decomposto (milhões): vindo de cada grupo do 1º turno, menos o que ele perdeu
+{'Lula': -0.37, 'Flávio': 0.0, 'Outros': 4.52, 'Brancos': 1.63, 'Nulos': 2.32, 'Abstenção': 2.29}
+
+CO: % de cada grupo do 1º turno
+            Lula  Flávio  Brancos  Nulos  Abstenção
+Lula       100.0     0.0      0.0    0.0        0.0
+Flávio       0.0    99.9      0.0    0.1        0.0
+Outros      41.0    47.9      4.1    7.0        0.0
+Brancos    100.0     0.0      0.0    0.0        0.0
+Nulos       41.6     0.0      0.0   23.0       35.4
+Abstenção    6.5     0.2      2.0    1.5       89.7
+
+Exterior: % de cada grupo do 1º turno
+            Lula  Flávio  Brancos  Nulos  Abstenção
+Lula       100.0     0.0      0.0    0.0        0.0
+Flávio       0.0   100.0      0.0    0.0        0.0
+Outros      66.6    17.8      7.9    7.7        0.0
+Brancos      0.0    52.3      0.0    0.0       47.7
+Nulos        0.0     0.0     26.9   28.6       44.5
+Abstenção    3.9     3.3      0.2    0.2       92.4
+
+N: % de cada grupo do 1º turno
+            Lula  Flávio  Brancos  Nulos  Abstenção
+Lula        95.7     0.0      0.0    0.1        4.2
+Flávio       0.0    97.4      0.7    1.1        0.8
+Outros      58.7    25.3      6.8    9.1        0.0
+Brancos    100.0     0.0      0.0    0.0        0.0
+Nulos       75.9     0.0      0.0   24.1        0.0
+Abstenção    0.0     0.0      0.0    0.0      100.0
+
+NE: % de cada grupo do 1º turno
+            Lula  Flávio  Brancos  Nulos  Abstenção
+Lula        99.2     0.0      0.2    0.4        0.2
+Flávio       0.0    99.9      0.1    0.0        0.0
+Outros      63.0    23.3      5.5    8.2        0.0
+Brancos    100.0     0.0      0.0    0.0        0.0
+Nulos       79.7     0.0      0.0   20.3        0.0
+Abstenção    5.4     0.0      2.0    3.3       89.2
+
+S: % de cada grupo do 1º turno
+            Lula  Flávio  Brancos  Nulos  Abstenção
+Lula       100.0     0.0      0.0    0.0        0.0
+Flávio       0.0   100.0      0.0    0.0        0.0
+Outros      25.9    54.8      5.6   10.8        3.0
+Brancos     63.2     0.0     28.0    0.0        8.8
+Nulos       43.1     9.3      8.9   38.7        0.0
+Abstenção   12.5     0.0      0.2    0.0       87.3
+
+SE: % de cada grupo do 1º turno
+            Lula  Flávio  Brancos  Nulos  Abstenção
+Lula       100.0     0.0      0.0    0.0        0.0
+Flávio       0.0    99.6      0.0    0.0        0.4
+Outros      50.5    42.9      0.0    6.5        0.0
+Brancos     52.6     0.0     44.3    3.0        0.0
+Nulos       55.7     0.0      0.0   44.3        0.0
+Abstenção    7.2     1.2      1.2    1.7       88.6

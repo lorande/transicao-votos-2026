@@ -1,0 +1,40 @@
+lam = 5.0 (peso do puxão para a matriz regional, em municípios médios da UF)
+municípios por UF: {'AC': 22, 'AL': 102, 'AM': 62, 'AP': 16, 'BA': 417, 'CE': 184, 'DF': 1, 'ES': 78, 'GO': 246, 'MA': 217, 'MG': 853, 'MS': 79, 'MT': 142, 'PA': 144, 'PB': 223, 'PE': 185, 'PI': 224, 'PR': 399, 'RJ': 92, 'RN': 167, 'RO': 52, 'RR': 15, 'RS': 497, 'SC': 295, 'SE': 75, 'SP': 645, 'TO': 139, 'ZZ': 146}
+
+BRASIL (soma das 27 UFs + exterior), % de cada grupo do 1º turno [intervalo 90%]:
+  Lula           Lula:  99.2 [99.0-99.3]  Flávio:   0.0 [ 0.0- 0.0]  Brancos:   0.0 [ 0.0- 0.0]  Nulos:   0.1 [ 0.0- 0.1]  Abstenção:   0.8 [ 0.6- 0.9]
+  Flávio         Lula:   0.1 [ 0.0- 0.1]  Flávio:  99.3 [99.0-99.5]  Brancos:   0.1 [ 0.1- 0.2]  Nulos:   0.1 [ 0.1- 0.2]  Abstenção:   0.4 [ 0.2- 0.6]
+  Outros         Lula:  52.6 [49.7-55.1]  Flávio:  35.8 [33.1-37.4]  Brancos:   3.0 [ 2.2- 4.1]  Nulos:   7.9 [ 7.0- 8.9]  Abstenção:   0.8 [ 0.5- 1.8]
+  Brancos        Lula:  64.7 [55.6-73.6]  Flávio:   1.2 [ 0.8- 4.3]  Brancos:  26.2 [19.7-30.1]  Nulos:   2.0 [ 1.1- 4.3]  Abstenção:   5.9 [ 2.2-10.1]
+  Nulos          Lula:  58.4 [52.1-62.6]  Flávio:   1.0 [ 0.4- 3.8]  Brancos:   1.0 [ 0.6- 2.2]  Nulos:  36.7 [32.1-39.3]  Abstenção:   3.0 [ 1.9- 5.7]
+  Abstenção      Lula:   6.7 [ 6.0- 7.5]  Flávio:   2.4 [ 1.7- 2.8]  Brancos:   1.3 [ 1.1- 1.5]  Nulos:   1.4 [ 1.1- 1.7]  Abstenção:  88.4 [87.5-89.1]
+
+BRASIL, fluxos em milhões:
+            Lula  Flávio  Brancos  Nulos  Abstenção
+Lula       53.43    0.00     0.00   0.03       0.41
+Flávio      0.05   55.69     0.06   0.08       0.23
+Outros      4.90    3.34     0.27   0.74       0.07
+Brancos     1.49    0.03     0.60   0.05       0.14
+Nulos       2.14    0.04     0.04   1.35       0.11
+Abstenção   2.23    0.79     0.42   0.45      29.57
+
+conferência 2º turno estimado x real (milhões):
+           estimado    real
+Lula         64.246  64.256
+Flávio       59.876  59.826
+Brancos       1.406   1.430
+Nulos         2.693   2.723
+Abstenção    30.524  30.509
+
+ganho do Lula por origem (milhões): {'Flávio': np.float64(0.05), 'Outros': np.float64(4.9), 'Brancos': np.float64(1.49), 'Nulos': np.float64(2.14), 'Abstenção': np.float64(2.23)} | perdas: 0.45 | líquido: 10.37
+
+sensibilidade (Brasil, % da linha):
+                  por região  UF, lam=0  UF, lam=2  UF, lam=5  UF, lam=20  UF, lam=100
+Outros → Lula           48.5       53.2       53.3       52.6        50.8         49.3
+Outros → Flávio         40.3       35.6       35.2       35.8        37.5         39.1
+Brancos → Lula          70.7       56.7       62.4       64.7        67.6         69.2
+Nulos → Lula            63.0       56.2       57.2       58.4        60.6         61.9
+Abstenção → Lula         6.9        7.7        6.9        6.7         6.6          6.8
+
+R² dentro de cada UF (municípios), mediana entre UFs: {'Lula': 0.984, 'Flávio': 0.989, 'Brancos': 0.528, 'Nulos': 0.628, 'Abstenção': 0.83}
+UFs com R² de Lula < 0,9: {'AC': 0.81, 'AP': 0.35}

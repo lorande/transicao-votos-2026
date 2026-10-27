@@ -1,0 +1,10 @@
+seções por turno (votos): {1: 499206, 2: 499205}
+seções por turno (detalhe): {1: 499248, 2: 499248}
+seções anuladas por turno: {}
+seções com comparecimento e sem voto no arquivo de votos: 0
+diferença votos nominais (detalhe - soma dos candidatos), total por turno: {1: 0.0, 2: 0.0}
+seções em que os grupos não somam os aptos, por turno: {1: 41, 2: 41} | maior diferença: 29
+seções só no 1º turno: 0 (0 eleitores) | só no 2º turno: 0 (0 eleitores)
+seções nos dois turnos: 499248 | sem região: 0
+totais 1º turno: {'Lula': 53879538, 'Flávio': 56104503, 'Outros': 9321993, 'Brancos': 2300798, 'Nulos': 3669003, 'Abstenção': 33469244, 'eleitores': 158745502}
+totais 2º turno: {'Lula': 64256232, 'Flávio': 59826041, 'Brancos': 1430496, 'Nulos': 2723305, 'Abstenção': 30509005, 'eleitores': 158745502}
