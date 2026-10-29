@@ -32,6 +32,7 @@ possa replicar e validar.
   Muda o tamanho de alguns: sobre municípios, Outros → Lula sobe para 52,6%
   e Abstenção → Lula cai para 6,7%. O modelo sobre seções é o mais
   confiável (ver [Comparação](#comparação-entre-modelos)).
+- **Testes de integridade estatística** (impressão digital, seções extremas, modelo de urna, votos fixos por urna, logs de biometria, Benford, Poisson e efeitos fixos por zona, calibrados com 2022) não mostram as marcas de manipulação que detectariam; a inserção de votos sem eleitor real compatível com os logs é de no máximo 0,47% do eleitorado (ver [Testes de integridade](#testes-de-integridade-estatística)).
 - **Roraima, Amapá e Acre** têm pouca informação para estimar a matriz; as estimativas de Roraima, em especial,
   não devem ser interpretadas (ver [Estados com pouca informação](#estados-com-pouca-informação-rr-ap-e-ac)).
   Juntos têm 1,0% dos votos em outros candidatos, o que pesa pouco no total do Brasil.
@@ -439,6 +440,205 @@ A hipótese do "teto do Flávio" foi testada e descartada (ver o teste acima).
 **O que não dá para concluir:** comportamento individual (é inferência ecológica), rotatividade (os fluxos são
 líquidos) e causas.
 
+## Estresse da regressão de eleitores novos
+
+A regressão ganho ~ x + Outros (seção [Eleitores novos](#eleitores-novos)) foi refeita em várias especificações
+(318 eleitores por seção em média; x médio 9,6, dos quais
+5,9 de queda da abstenção e 3,6 de queda de brancos e nulos).
+Pela identidade ganho do Lula + ganho do Flávio = x + Outros, os coeficientes das duas equações somam 1 e basta a do Lula.
+
+| Especificação (Lula) | x | Outros | r² |
+|---|---:|---:|---:|
+| Base | 0,69 | 0,50 | 0,71 |
+| Ponderada pelo eleitorado | 0,69 | 0,48 | 0,70 |
+| Efeito fixo de estado | 0,70 | 0,60 | 0,70 |
+| + força de Lula e Flávio no 1º turno | 0,65 | 0,54 | 0,75 |
+
+- **Queda de brancos e nulos × queda da abstenção:** separando x, a queda de brancos e nulos rende
+  0,94 voto ao Lula (0,89 com efeito fixo de estado); a queda
+  da abstenção, 0,62 (0,65). Quem deixou de votar branco ou nulo
+  foi quase todo para o Lula.
+- **Intercepto = força local.** Com os votos do Lula no 1º turno como controle, o intercepto quase some e aparece
+  +0,051 × votos do Lula no 1º turno; os do Flávio ficam com ≈ 0.
+- **Por região:**
+
+| Região | x → Lula | Outros → Lula | x médio por seção |
+|---|---:|---:|---:|
+| CO | 0,58 | 0,49 | 6,7 |
+| N | 0,53 | 0,71 | -3,3 |
+| NE | 0,79 | 0,69 | 10,9 |
+| S | 0,66 | 0,50 | 9,5 |
+| SE | 0,67 | 0,57 | 11,8 |
+
+- **Outros separados por candidato:**
+
+| Candidato do 1º turno | Fração para o Lula (efeito fixo de estado) |
+|---|---:|
+| Cury | 0,74 |
+| Renan Santos | 0,60 |
+| Caiado | 0,47 |
+| Zema | -0,05 |
+| Demais | 1,03 |
+
+  Estes coeficientes embutem a parcela dos eleitores de cada candidato que foi para branco, nulo ou abstenção (que
+  reduz x). O do Zema tem pouca precisão (poucos votos, concentrados em Minas).
+
+### Coeficientes que dependem da força local
+
+Os coeficientes de x e de Outros como função da força do Lula no 1º turno (p = votos do Lula ÷ eleitorado da seção):
+
+| Forma | Eleitores novos | Outros | r² |
+|---|---|---|---:|
+| Coeficientes fixos | 0,694 | 0,499 | 0,710 |
+| Linear a·(1 + b·p) | 0,409·(1 + 1,75·p) | 0,335·(1 + 2,54·p) | 0,764 |
+| Logística 1/(1 + e^−(α+β·p)) | α = -0,61, β = 3,76 | α = -0,74, β = 3,76 | 0,767 |
+
+![Coeficientes por força do Lula](saida/coef_por_forca.png)
+
+Os eleitores novos e os de Outros se dividiram conforme a força local do Lula, com a mesma sensibilidade (β ≈
+3,8 nas duas variáveis). Na curva livre, a fração de Outros que foi para o Lula cai
+nas seções onde ele é muito dominante — possivelmente porque ali quem votou em outro candidato tende a ser o eleitor
+contrário a ele.
+
+## Testes de integridade estatística
+
+Estatística encontra anomalias, não fraude: cada teste abaixo foi desenhado para detectar um tipo de manipulação, e
+os que podem ser calibrados foram calibrados injetando a fraude nos dados reais ou comparando com eleições anteriores.
+Nenhum substitui as auditorias oficiais (boletins assinados, registro digital do voto, teste de integridade).
+
+| Teste | O que detectaria | Resultado |
+|---|---|---|
+| Impressão digital (comparecimento × votação) | inserção de votos em seções específicas | sem cauda; 62 seções com comparecimento e voto no Lula ≥ 95% em 499.248 |
+| Salto de comparecimento × vizinhas do mesmo local | adulteração localizada | 472 seções a 4+ desvios, nos dois sentidos; efeito líquido de 16 votos na diferença |
+| Resíduos por modelo de urna, no mesmo local | urna de um modelo com resultado diferente | diferenças ≤ 0,17 voto por seção |
+| Votos fixos por urna | conversão de K votos por urna | c = 0,26 ± 0,10 (com 10 injetados: 8,9); máximo compatível 0,43 voto por urna |
+| Logs de urna: biometria (amostra) | votos sem eleitor real | liberações sem biometria +1,30 por seção (com 1% inserido: +4,48); inserção máxima 0,47% do eleitorado |
+| Benford 1BL e 2BL, calibrado | números fabricados | dentro da faixa de 2022 e do 1º turno de 2026 |
+| Brancos e nulos × Poisson, por zona | números regulares demais | igual ao 2º turno de 2022 |
+| Efeitos fixos por zona, contra 2022 | concentração em zonas | distribuições contínuas, sem zonas destoantes |
+
+### Impressão digital, seções extremas e resíduos
+
+![Impressão digital](saida/forense_klimek.png)
+
+- **Impressão digital:** nuvens contínuas, sem mancha no canto de comparecimento e votação próximos de 100%; correlação
+  entre comparecimento e votação de 0,05 (Lula) e
+  -0,05 (Flávio) no 2º turno.
+- **Comparecimento ≥ 95%:** 620 seções no 2º turno, pequenas (mediana de
+  165 eleitores, contra 327), quase sempre a
+  única do seu local; o comparecimento alto é do lugar inteiro.
+- **Salto de comparecimento contra as vizinhas do mesmo local:** desvio típico de 1,9
+  ponto; 8 seções a 6+ desvios acima e 21 abaixo (lista em
+  `saida/forense_extremos.csv`).
+- **Resíduos do modelo de transição:** média de 0,10 voto por seção na diferença Lula − Flávio;
+  39% da variação fica entre locais de votação (geografia). Por modelo de urna, as
+  diferenças brutas somem ao comparar seções do mesmo local. 1206 urnas trocadas entre os turnos
+  não destoam (resíduo 0,09). 86 seções têm resultado que não saiu
+  direto da urna.
+
+![Salto de comparecimento](saida/forense_salto_comparecimento.png)
+![Resíduos por modelo de urna](saida/forense_residuos.png)
+
+### Votos fixos por urna
+
+Hipótese testada: 10 votos de brancos, nulos ou abstenção convertidos em votos no Lula em cada urna. Um número fixo
+pesa mais nas seções pequenas; o teste compara seções de tamanhos diferentes no mesmo local de votação.
+
+![Teste de votos fixos por urna](saida/teste_fraude_constante.png)
+
+Nos dados reais, c = 0,26 ± 0,10 voto por urna no ganho do Lula e -0,72 na queda de
+brancos, nulos e abstenção; com a fraude injetada, 8,9 e 8,0. Uma fraude
+**proporcional** ao eleitorado não é distinguível por este teste.
+
+### Logs de urna
+
+Amostra de 3001 seções sorteadas por estado e 658
+seções sinalizadas pelos testes acima; log e boletim dos dois turnos (`urna_amostra.py`, `urna_baixa.py`, `urna_log.py`).
+Os arquivos de log não estão no repositório.
+
+- **Biometria:** 12,20% dos eleitores liberados sem biometria no 1º turno e
+  12,45% no 2º; variação de 1,30 ± 0,11 por seção. Uma
+  inserção de 1% do eleitorado em votos sem eleitor real levaria a
+  4,48; a inserção máxima compatível com os dados é de 0,47%
+  do eleitorado.
+- **Ritmo:** nenhum voto a menos de 10 segundos do anterior; o voto mais rápido no 2º turno vem da cédula com um só cargo.
+- **Consistência:** em 18 seções o log tem menos votos que o boletim no 2º turno
+  (provavelmente urnas substituídas durante o dia; só o log da urna totalizada foi baixado). Lista em
+  `saida/urna_inconsistencias.csv`.
+
+### Benford, calibrado
+
+1BL nos totais por município (e por zona) e 2BL nas contagens por seção. Calibração: 2022 1º e 2º turnos (Lula e
+Bolsonaro) e 2026 1º turno; teste: 2026 2º turno. Com 500 mil seções o qui-quadrado rejeita Benford em qualquer
+eleição; o que importa é se o caso testado destoa da calibração.
+
+| Teste | MAD na calibração | 2026 2º turno |
+|---|---|---|
+| 1BL município | 0,0033 a 0,0114 | Lula: 0,0036 (z = -0,9) |
+| 1BL município | 0,0033 a 0,0114 | Flávio: 0,0116 (z = 1,1) |
+| 1BL zona | 0,0121 a 0,0223 | Lula: 0,0129 (z = -0,7) |
+| 1BL zona | 0,0121 a 0,0223 | Flávio: 0,0172 (z = 0,3) |
+| 2BL seção | 0,0065 a 0,0131 | Lula: 0,0103 (z = 0,0) |
+| 2BL seção | 0,0065 a 0,0131 | Flávio: 0,0091 (z = -0,5) |
+
+![Benford](saida/benford.png)
+
+### Brancos e nulos × Poisson
+
+Em cada zona, esperado por seção = taxa da zona × comparecimento; φ = X² / (n − 1) (1 = Poisson; < 1 = regular demais).
+
+| Caso | φ mediano | Zonas com excesso de variação | Zonas com falta de variação |
+|---|---:|---:|---:|
+| Brancos 2022 2º turno | 1,085 | 25,1% | 1,3% |
+| Brancos 2026 2º turno (teste) | 1,086 | 25,5% | 1,4% |
+| Nulos 2022 2º turno | 1,266 | 62,4% | 0,5% |
+| Nulos 2026 2º turno (teste) | 1,185 | 49,3% | 0,5% |
+
+Sob Poisson puro, 5% das zonas apareceriam com falta de variação.
+
+![Brancos e nulos](saida/poisson_brancos_nulos.png)
+
+### Efeitos fixos por zona eleitoral, contra 2022
+
+ΔVotos = efeito fixo da zona + β1·ΔComparecimento + β2·Queda de brancos + β3·Queda de nulos + β4·Outros 1T, por seção
+(os β do adversário são 1 − β do Lula).
+
+| β | Lula 2022 | Lula 2026 | Flávio 2026 |
+|---|---:|---:|---:|
+| β1 ΔComparecimento | 0,55 | 0,62 | 0,38 |
+| β2 Queda de brancos | 0,46 | 0,82 | 0,18 |
+| β3 Queda de nulos | 0,58 | 0,77 | 0,23 |
+| β4 Outros no 1º turno | 0,46 | 0,59 | 0,41 |
+
+![Efeitos fixos por zona](saida/fe_modelo.png)
+
+O Lula capta mais de cada fluxo em 2026 do que em 2022, sobretudo de brancos e nulos. Estimados zona a zona, os β têm
+distribuição contínua, sem um grupo de zonas destoante; os resíduos de 2026 têm caudas até mais leves que os de 2022.
+
+**Interceptos de zona** (votos do Lula por seção não explicados pelos quatro fluxos; mediana das zonas):
+
+| Região | 2022 | 2026 |
+|---|---:|---:|
+| NE | -0,5 | 5,6 |
+| N | -3,2 | 3,8 |
+| SE | -4,0 | 2,7 |
+| CO | -5,0 | 0,8 |
+| S | -6,9 | -0,1 |
+
+![Interceptos de zona](saida/fe_interceptos.png)
+
+A distribuição inteira se deslocou a favor do Lula de 2022 para 2026, com a mesma ordem entre regiões; o intercepto
+acompanha a força do Lula no 1º turno (r = 0,62). O agrupamento das zonas (k-means) não
+encontra grupos naturais: as zonas variam de forma contínua, em faixas alinhadas à força do Lula. Roraima destoa (cerca
+de +11 votos por seção): o comparecimento caiu entre os turnos e quem deixou de votar foi, em grande parte, eleitor do
+Flávio — em 2026 ele perdeu votos em números absolutos em AC, AP, RR, AM, TO e MA, o que não aconteceu com Bolsonaro em
+nenhum estado em 2022.
+
+**O que estes testes não alcançam:** uma troca proporcional dentro do programa da urna (voto branco gravado como Lula,
+sem eleitor a mais) seria indistinguível do comportamento real em todos os testes acima; ela é o objeto do teste de
+integridade (votação paralela) e da auditoria do código, não de estatística sobre os dados publicados.
+
+
 ## Sensibilidade
 
 Brasil, % da linha, variando o peso que puxa cada matriz estadual para a da região (lam, em observações médias;
@@ -501,6 +701,20 @@ python -X utf8 -E -P grafico_fluxos.py saida/ secao             # diagrama de fl
 python -X utf8 -E -P grafico_novos_votantes.py saida/ bruto      # ganho × eleitores novos
 python -X utf8 -E -P grafico_novos_votantes.py saida/ sem_outros # idem, sem a parcela de Outros
 python -X utf8 -E -P teste_teto_flavio.py saida/                # teste do achatamento do Flávio
+python -X utf8 -E -P estresse_regressao.py saida/               # estresse da regressão de eleitores novos
+python -X utf8 -E -P coef_por_forca.py saida/                   # coeficientes que dependem da força do Lula
+python -X utf8 -E -P forense.py saida/                          # impressão digital, extremos, resíduos
+python -X utf8 -E -P teste_fraude_constante.py saida/ 10        # votos fixos por urna (aqui, 10)
+python -X utf8 -E -P urna_amostra.py                            # amostra de seções para os logs
+python -X utf8 -E -P urna_baixa.py dados_urna/amostra.csv       # baixa log e boletim (~1 GB)
+python -X utf8 -E -P urna_log.py                                # lê os logs
+python -X utf8 -E -P urna_analise.py 1                          # testes com os logs
+python -X utf8 -E -P base_votacao.py 2022                       # base por seção de 2022 (baixa ~270 MB)
+python -X utf8 -E -P base_votacao.py 2026                       # mesma montagem para 2026
+python -X utf8 -E -P benford.py saida/                          # Benford calibrado
+python -X utf8 -E -P poisson_brancos_nulos.py saida/            # brancos e nulos × Poisson
+python -X utf8 -E -P fe_modelo.py saida/                        # efeitos fixos por zona, 2022 e 2026
+python -X utf8 -E -P fe_interceptos.py saida/                   # interceptos de zona
 python -X utf8 -E -P gera_relatorio.py                          # este README
 python -X utf8 -E -P validar.py                                 # confere os resultados
 ```
@@ -519,6 +733,11 @@ refaz os ajustes e confere a coerência de todos os resultados publicados.
 | `grafico_fluxos.py` | diagrama de fluxos entre os turnos a partir dos fluxos nacionais |
 | `grafico_novos_votantes.py` | ganho de cada candidato × eleitores novos, por seção (`saida/novos_votantes*`) |
 | `teste_teto_flavio.py` | teste do achatamento do Flávio por faixa de força e com controles (`saida/teste_teto_flavio*`) |
+| `estresse_regressao.py`, `coef_por_forca.py` | estresse da regressão e coeficientes em função da força do Lula (`saida/estresse_regressao*`, `saida/coef_por_forca*`) |
+| `forense.py`, `teste_fraude_constante.py` | impressão digital, seções extremas, resíduos por modelo de urna, votos fixos por urna (`saida/forense_*`, `saida/teste_fraude_constante*`) |
+| `urna_amostra.py`, `urna_baixa.py`, `urna_log.py`, `urna_analise.py` | amostra, download, leitura e testes dos logs de urna (`saida/urna_*`) |
+| `base_votacao.py`, `benford.py`, `poisson_brancos_nulos.py`, `fe_modelo.py`, `fe_interceptos.py` | bases de 2022 e 2026 e os testes calibrados (`saida/votacao_*`, `saida/benford*`, `saida/poisson_*`, `saida/fe_*`) |
+| `relatorio_integridade.py` | seções do README sobre o estresse e os testes de integridade |
 | `gera_relatorio.py` | gera este README a partir de `saida/` |
 | `validar.py` | confere os resultados publicados |
 | `saida/transicao_secoes.csv.gz`, `saida/transicao_municipios.csv` | bases por seção e por município |

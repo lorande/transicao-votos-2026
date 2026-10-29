@@ -1,0 +1,46 @@
+﻿,,coef,ep,r2
+base,x,0.69426,0.00639,0.71008
+base,Outros,0.49886,0.00557,0.71008
+base,const,4.82801,0.10016,0.71008
+peso = eleitorado,x,0.69498,0.00701,0.69733
+peso = eleitorado,Outros,0.48375,0.00579,0.69733
+peso = eleitorado,const,5.31309,0.1109,0.69733
+efeito fixo de UF,x,0.70493,0.00494,0.69683
+efeito fixo de UF,Outros,0.59597,0.00502,0.69683
+x separado,dA,0.62072,0.00646,0.72213
+x separado,dBN,0.94149,0.00785,0.72213
+x separado,Outros,0.52589,0.00527,0.72213
+x separado,const,3.86011,0.09456,0.72213
+x separado + EF UF,dA,0.64661,0.005,0.70329
+x separado + EF UF,dBN,0.89074,0.00694,0.70329
+x separado + EF UF,Outros,0.61082,0.00453,0.70329
++ força no 1º turno,x,0.64785,0.0053,0.75055
++ força no 1º turno,Outros,0.53544,0.00598,0.75055
++ força no 1º turno,Lula1,0.05144,0.00095,0.75055
++ força no 1º turno,Flavio1,-0.00026,0.00108,0.75055
++ força no 1º turno,const,-0.93345,0.12483,0.75055
++ força no 1º turno + EF UF,x,0.67266,0.0044,0.71379
++ força no 1º turno + EF UF,Outros,0.5727,0.00548,0.71379
++ força no 1º turno + EF UF,Lula1,0.04075,0.00114,0.71379
++ força no 1º turno + EF UF,Flavio1,-0.00295,0.00096,0.71379
+Outros por candidato,x,0.68834,0.00584,0.72505
+Outros por candidato,Cury,0.74032,0.00793,0.72505
+Outros por candidato,Renan Santos,0.47765,0.00892,0.72505
+Outros por candidato,Caiado,0.40003,0.00749,0.72505
+Outros por candidato,Zema,-0.22945,0.04146,0.72505
+Outros por candidato,Demais,0.96237,0.03332,0.72505
+Outros por candidato,const,4.07551,0.08579,0.72505
+Outros por candidato + EF UF,x,0.70007,0.00482,0.70603
+Outros por candidato + EF UF,Cury,0.73545,0.0061,0.70603
+Outros por candidato + EF UF,Renan Santos,0.59775,0.00659,0.70603
+Outros por candidato + EF UF,Caiado,0.47201,0.00773,0.70603
+Outros por candidato + EF UF,Zema,-0.04785,0.03234,0.70603
+Outros por candidato + EF UF,Demais,1.02559,0.0243,0.70603
+Outros por candidato + força + EF UF,x,0.6696,0.0043,0.72166
+Outros por candidato + força + EF UF,Cury,0.71576,0.00612,0.72166
+Outros por candidato + força + EF UF,Renan Santos,0.56962,0.00646,0.72166
+Outros por candidato + força + EF UF,Caiado,0.46352,0.00734,0.72166
+Outros por candidato + força + EF UF,Zema,-0.02503,0.03455,0.72166
+Outros por candidato + força + EF UF,Demais,0.91433,0.02027,0.72166
+Outros por candidato + força + EF UF,Lula1,0.03881,0.00105,0.72166
+Outros por candidato + força + EF UF,Flavio1,-0.00374,0.00086,0.72166

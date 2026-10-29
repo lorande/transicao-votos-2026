@@ -2,8 +2,9 @@
 
 Uso:  python -X utf8 -E -P gera_relatorio.py
 """
-import os
+import os, sys
 import numpy as np, pandas as pd
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
 S = os.path.join(AQUI, "saida")
@@ -168,6 +169,9 @@ def tab_r2():
         linhas.append(f"| {nome} | " + " | ".join(br(med[g], 2) for g in G2) + " |")
     return "\n".join(linhas)
 
+import relatorio_integridade
+secoes_integridade, resumo_integridade = relatorio_integridade.secoes(S)
+
 md = f"""# Transição de votos para presidente, 1º → 2º turno de 2026
 
 Para onde foram, no 2º turno, os eleitores de cada grupo do 1º turno — Lula, Flávio Bolsonaro, outros
@@ -202,6 +206,7 @@ possa replicar e validar.
   Muda o tamanho de alguns: sobre municípios, Outros → Lula sobe para {br(cel('municipio', 'Outros', 'Lula').pct)}%
   e Abstenção → Lula cai para {br(cel('municipio', 'Abstenção', 'Lula').pct)}%. O modelo sobre seções é o mais
   confiável (ver [Comparação](#comparação-entre-modelos)).
+{resumo_integridade}
 - **Roraima, Amapá e Acre** têm pouca informação para estimar a matriz; as estimativas de Roraima, em especial,
   não devem ser interpretadas (ver [Estados com pouca informação](#estados-com-pouca-informação-rr-ap-e-ac)).
   Juntos têm {br(peso_poucos)}% dos votos em outros candidatos, o que pesa pouco no total do Brasil.
@@ -422,6 +427,8 @@ A hipótese do "teto do Flávio" foi testada e descartada (ver o teste acima).
 **O que não dá para concluir:** comportamento individual (é inferência ecológica), rotatividade (os fluxos são
 líquidos) e causas.
 
+{secoes_integridade}
+
 ## Sensibilidade
 
 Brasil, % da linha, variando o peso que puxa cada matriz estadual para a da região (lam, em observações médias;
@@ -469,6 +476,20 @@ python -X utf8 -E -P grafico_fluxos.py saida/ secao             # diagrama de fl
 python -X utf8 -E -P grafico_novos_votantes.py saida/ bruto      # ganho × eleitores novos
 python -X utf8 -E -P grafico_novos_votantes.py saida/ sem_outros # idem, sem a parcela de Outros
 python -X utf8 -E -P teste_teto_flavio.py saida/                # teste do achatamento do Flávio
+python -X utf8 -E -P estresse_regressao.py saida/               # estresse da regressão de eleitores novos
+python -X utf8 -E -P coef_por_forca.py saida/                   # coeficientes que dependem da força do Lula
+python -X utf8 -E -P forense.py saida/                          # impressão digital, extremos, resíduos
+python -X utf8 -E -P teste_fraude_constante.py saida/ 10        # votos fixos por urna (aqui, 10)
+python -X utf8 -E -P urna_amostra.py                            # amostra de seções para os logs
+python -X utf8 -E -P urna_baixa.py dados_urna/amostra.csv       # baixa log e boletim (~1 GB)
+python -X utf8 -E -P urna_log.py                                # lê os logs
+python -X utf8 -E -P urna_analise.py 1                          # testes com os logs
+python -X utf8 -E -P base_votacao.py 2022                       # base por seção de 2022 (baixa ~270 MB)
+python -X utf8 -E -P base_votacao.py 2026                       # mesma montagem para 2026
+python -X utf8 -E -P benford.py saida/                          # Benford calibrado
+python -X utf8 -E -P poisson_brancos_nulos.py saida/            # brancos e nulos × Poisson
+python -X utf8 -E -P fe_modelo.py saida/                        # efeitos fixos por zona, 2022 e 2026
+python -X utf8 -E -P fe_interceptos.py saida/                   # interceptos de zona
 python -X utf8 -E -P gera_relatorio.py                          # este README
 python -X utf8 -E -P validar.py                                 # confere os resultados
 ```
@@ -487,6 +508,11 @@ refaz os ajustes e confere a coerência de todos os resultados publicados.
 | `grafico_fluxos.py` | diagrama de fluxos entre os turnos a partir dos fluxos nacionais |
 | `grafico_novos_votantes.py` | ganho de cada candidato × eleitores novos, por seção (`saida/novos_votantes*`) |
 | `teste_teto_flavio.py` | teste do achatamento do Flávio por faixa de força e com controles (`saida/teste_teto_flavio*`) |
+| `estresse_regressao.py`, `coef_por_forca.py` | estresse da regressão e coeficientes em função da força do Lula (`saida/estresse_regressao*`, `saida/coef_por_forca*`) |
+| `forense.py`, `teste_fraude_constante.py` | impressão digital, seções extremas, resíduos por modelo de urna, votos fixos por urna (`saida/forense_*`, `saida/teste_fraude_constante*`) |
+| `urna_amostra.py`, `urna_baixa.py`, `urna_log.py`, `urna_analise.py` | amostra, download, leitura e testes dos logs de urna (`saida/urna_*`) |
+| `base_votacao.py`, `benford.py`, `poisson_brancos_nulos.py`, `fe_modelo.py`, `fe_interceptos.py` | bases de 2022 e 2026 e os testes calibrados (`saida/votacao_*`, `saida/benford*`, `saida/poisson_*`, `saida/fe_*`) |
+| `relatorio_integridade.py` | seções do README sobre o estresse e os testes de integridade |
 | `gera_relatorio.py` | gera este README a partir de `saida/` |
 | `validar.py` | confere os resultados publicados |
 | `saida/transicao_secoes.csv.gz`, `saida/transicao_municipios.csv` | bases por seção e por município |

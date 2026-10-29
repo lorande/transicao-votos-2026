@@ -7,3 +7,4 @@ tse_2t_json/
 __pycache__/
 *.pyc
 .venv/
+dados_urna/

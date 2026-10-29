@@ -1,0 +1,16 @@
+﻿variável,especificação,c_real,ep_real,c_com_fraude_10,ep_sim
+ganho_Lula,"sem controles, sem efeito fixo",-5.1699,0.087,3.9864,0.0809
+ganho_Lula,efeito fixo de local,-0.1493,0.111,8.5347,0.1306
+ganho_Lula,efeito fixo de local + composição,0.2593,0.1027,8.9431,0.1202
+queda_BNA,"sem controles, sem efeito fixo",-4.6673,0.0846,4.489,0.0811
+queda_BNA,efeito fixo de local,-2.7356,0.1135,5.9484,0.1204
+queda_BNA,efeito fixo de local + composição,-0.7183,0.0982,7.9656,0.106
+queda_BN,"sem controles, sem efeito fixo",-0.0345,0.0342,1.0455,0.0343
+queda_BN,efeito fixo de local,-0.4045,0.0601,1.0715,0.0611
+queda_BN,efeito fixo de local + composição,0.1211,0.0452,1.4765,0.0285
+queda_A,"sem controles, sem efeito fixo",-4.6328,0.078,3.4435,0.076
+queda_A,efeito fixo de local,-2.3311,0.1021,4.8769,0.1123
+queda_A,efeito fixo de local + composição,-0.8394,0.0934,6.4891,0.1012
+ganho_Flávio,"sem controles, sem efeito fixo",-2.7221,0.0635,-2.7221,0.0635
+ganho_Flávio,efeito fixo de local,-0.7866,0.0936,-0.7866,0.0936
+ganho_Flávio,efeito fixo de local + composição,-0.9775,0.0871,-0.9775,0.0871
