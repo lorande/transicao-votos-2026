@@ -32,7 +32,7 @@ possa replicar e validar.
   Muda o tamanho de alguns: sobre municípios, Outros → Lula sobe para 52,6%
   e Abstenção → Lula cai para 6,7%. O modelo sobre seções é o mais
   confiável (ver [Comparação](#comparação-entre-modelos)).
-- **Testes de integridade estatística** (impressão digital, seções extremas, modelo de urna, votos fixos por urna, logs de biometria, Benford, Poisson e efeitos fixos por zona, calibrados com 2022) não mostram as marcas de manipulação que detectariam; a inserção de votos sem eleitor real compatível com os logs é de no máximo 0,47% do eleitorado (ver [Testes de integridade](#testes-de-integridade-estatística)).
+- **Testes de integridade estatística** (impressão digital, seções extremas, modelo de urna, votos fixos por urna, logs de biometria, Benford, Poisson e efeitos fixos por zona, calibrados com 2022) não mostram as marcas de manipulação que detectariam; a inserção de votos sem eleitor real compatível com os logs é de no máximo 0,47% do eleitorado, e os 3.665 boletins de urna conferidos batem voto a voto com os dados publicados (ver [Testes de integridade](#testes-de-integridade-estatística)).
 - **Roraima, Amapá e Acre** têm pouca informação para estimar a matriz; as estimativas de Roraima, em especial,
   não devem ser interpretadas (ver [Estados com pouca informação](#estados-com-pouca-informação-rr-ap-e-ac)).
   Juntos têm 1,0% dos votos em outros candidatos, o que pesa pouco no total do Brasil.
@@ -513,6 +513,7 @@ Nenhum substitui as auditorias oficiais (boletins assinados, registro digital do
 | Resíduos por modelo de urna, no mesmo local | urna de um modelo com resultado diferente | diferenças ≤ 0,17 voto por seção |
 | Votos fixos por urna | conversão de K votos por urna | c = 0,26 ± 0,10 (com 10 injetados: 8,9); máximo compatível 0,43 voto por urna |
 | Logs de urna: biometria (amostra) | votos sem eleitor real | liberações sem biometria +1,30 por seção (com 1% inserido: +4,48); inserção máxima 0,47% do eleitorado |
+| Boletins de urna × dados publicados (amostra) | redistribuição dos votos depois da urna | 3.665 de 3.665 boletins batem voto a voto nos dois turnos |
 | Benford 1BL e 2BL, calibrado | números fabricados | dentro da faixa de 2022 e do 1º turno de 2026 |
 | Brancos e nulos × Poisson, por zona | números regulares demais | igual ao 2º turno de 2022 |
 | Efeitos fixos por zona, contra 2022 | concentração em zonas | distribuições contínuas, sem zonas destoantes |
@@ -565,6 +566,23 @@ Os arquivos de log não estão no repositório.
 - **Consistência:** em 18 seções o log tem menos votos que o boletim no 2º turno
   (provavelmente urnas substituídas durante o dia; só o log da urna totalizada foi baixado). Lista em
   `saida/urna_inconsistencias.csv`.
+
+### Boletins de urna × dados publicados
+
+O boletim de urna (BU) é o arquivo assinado que cada urna grava ao encerrar a votação, antes de qualquer transmissão,
+e que também é impresso e afixado na seção. Para as seções da amostra de logs, `urna_bu.py` lê no BU os votos para
+presidente (Lula, adversário, outros, brancos e nulos) e compara com o arquivo de votação por seção dos dados abertos,
+usado em todas as análises deste repositório.
+
+| Turno | Boletins | Batem voto a voto | Votos conferidos | Diferença absoluta |
+|---|---:|---:|---:|---:|
+| 1º | 3.665 | 3.665 | 870.382 | 0 |
+| 2º | 3.665 | 3.665 | 888.613 | 0 |
+
+Batem também todas as seções sinalizadas (comparecimento ≥ 95%, salto extremo, resultado fora da urna). Uma
+redistribuição dos totais na transmissão ou na totalização apareceria aqui como divergência; uma troca feita dentro do
+programa da urna, não, porque o BU já sairia trocado. A assinatura digital dos BUs não foi conferida. Comparação
+seção a seção em `saida/urna_bu_comparacao.csv`.
 
 ### Benford, calibrado
 
@@ -634,7 +652,8 @@ de +11 votos por seção): o comparecimento caiu entre os turnos e quem deixou d
 Flávio — em 2026 ele perdeu votos em números absolutos em AC, AP, RR, AM, TO e MA, o que não aconteceu com Bolsonaro em
 nenhum estado em 2022.
 
-**O que estes testes não alcançam:** uma troca proporcional dentro do programa da urna (voto branco gravado como Lula,
+**O que estes testes não alcançam:** a conferência dos boletins exclui redistribuição depois da urna nas seções da
+amostra, mas uma troca proporcional dentro do programa da urna (voto branco gravado como Lula,
 sem eleitor a mais) seria indistinguível do comportamento real em todos os testes acima; ela é o objeto do teste de
 integridade (votação paralela) e da auditoria do código, não de estatística sobre os dados publicados.
 
@@ -698,6 +717,7 @@ python -X utf8 -E -P transicao_uf.py saida/ 200 5 municipio     # modelo por est
 python -X utf8 -E -P secao_base.py                              # baixa os dados por seção e monta a base
 python -X utf8 -E -P transicao_uf.py saida/ 200 5 secao         # modelo principal
 python -X utf8 -E -P grafico_fluxos.py saida/ secao             # diagrama de fluxos (também: municipio)
+python -X utf8 -E -P grafico_fluxos.py saida/ secao SC          # diagrama de um estado (aqui, Santa Catarina)
 python -X utf8 -E -P grafico_novos_votantes.py saida/ bruto      # ganho × eleitores novos
 python -X utf8 -E -P grafico_novos_votantes.py saida/ sem_outros # idem, sem a parcela de Outros
 python -X utf8 -E -P teste_teto_flavio.py saida/                # teste do achatamento do Flávio
@@ -711,6 +731,7 @@ python -X utf8 -E -P urna_log.py                                # lê os logs
 python -X utf8 -E -P urna_analise.py 1                          # testes com os logs
 python -X utf8 -E -P base_votacao.py 2022                       # base por seção de 2022 (baixa ~270 MB)
 python -X utf8 -E -P base_votacao.py 2026                       # mesma montagem para 2026
+python -X utf8 -E -P urna_bu.py                                 # boletins de urna × dados publicados
 python -X utf8 -E -P benford.py saida/                          # Benford calibrado
 python -X utf8 -E -P poisson_brancos_nulos.py saida/            # brancos e nulos × Poisson
 python -X utf8 -E -P fe_modelo.py saida/                        # efeitos fixos por zona, 2022 e 2026
@@ -730,12 +751,13 @@ refaz os ajustes e confere a coerência de todos os resultados publicados.
 | `transicao.py` | baixa os resultados por município do site do TSE e estima o modelo por região |
 | `transicao_uf.py` | modelo por estado (sobre municípios ou seções), agregado para o Brasil, e gráficos |
 | `secao_base.py` | baixa os dados abertos por seção e monta a base dos dois turnos |
-| `grafico_fluxos.py` | diagrama de fluxos entre os turnos a partir dos fluxos nacionais |
+| `grafico_fluxos.py` | diagrama de fluxos entre os turnos, do Brasil ou de um estado (`transicao_secao_fluxos_sc.png`: Santa Catarina) |
 | `grafico_novos_votantes.py` | ganho de cada candidato × eleitores novos, por seção (`saida/novos_votantes*`) |
 | `teste_teto_flavio.py` | teste do achatamento do Flávio por faixa de força e com controles (`saida/teste_teto_flavio*`) |
 | `estresse_regressao.py`, `coef_por_forca.py` | estresse da regressão e coeficientes em função da força do Lula (`saida/estresse_regressao*`, `saida/coef_por_forca*`) |
 | `forense.py`, `teste_fraude_constante.py` | impressão digital, seções extremas, resíduos por modelo de urna, votos fixos por urna (`saida/forense_*`, `saida/teste_fraude_constante*`) |
 | `urna_amostra.py`, `urna_baixa.py`, `urna_log.py`, `urna_analise.py` | amostra, download, leitura e testes dos logs de urna (`saida/urna_*`) |
+| `urna_bu.py` | lê os boletins de urna da amostra e compara com os dados publicados (`saida/urna_bu_*`) |
 | `base_votacao.py`, `benford.py`, `poisson_brancos_nulos.py`, `fe_modelo.py`, `fe_interceptos.py` | bases de 2022 e 2026 e os testes calibrados (`saida/votacao_*`, `saida/benford*`, `saida/poisson_*`, `saida/fe_*`) |
 | `relatorio_integridade.py` | seções do README sobre o estresse e os testes de integridade |
 | `gera_relatorio.py` | gera este README a partir de `saida/` |

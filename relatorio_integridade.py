@@ -26,6 +26,7 @@ def secoes(S):
     mu = le(S, "forense_modelo_urna.csv", index_col=0)
     fc = le(S, "teste_fraude_constante.csv")
     ur = serie(S, "urna_resumo.csv")
+    bu = le(S, "urna_bu_resumo.csv").set_index("NR_TURNO")
     bf = le(S, "benford.csv")
     po = le(S, "poisson_brancos_nulos.csv")
     fe = le(S, "fe_modelo.csv", index_col=[0, 1, 2])
@@ -134,6 +135,7 @@ Nenhum substitui as auditorias oficiais (boletins assinados, registro digital do
 | Resíduos por modelo de urna, no mesmo local | urna de um modelo com resultado diferente | diferenças ≤ {br(mu['mean_dentro_local'].abs().max(), 2)} voto por seção |
 | Votos fixos por urna | conversão de K votos por urna | c = {br(fcp.c_real)} ± {br(fcp.ep_real)} (com {K} injetados: {br(fcp[sim_col], 1)}); máximo compatível {br(lim_c, 2)} voto por urna |
 | Logs de urna: biometria (amostra) | votos sem eleitor real | liberações sem biometria +{br(ur['d_sem_bio_media'])} por seção (com {br(ur['insercao_simulada_pct'], 0)}% inserido: +{br(ur['d_sem_bio_com_insercao'])}); inserção máxima {br(ur['insercao_maxima_pct'], 2)}% do eleitorado |
+| Boletins de urna × dados publicados (amostra) | redistribuição dos votos depois da urna | {br(bu.batem.min(), 0)} de {br(bu.boletins.min(), 0)} boletins batem voto a voto nos dois turnos |
 | Benford 1BL e 2BL, calibrado | números fabricados | dentro da faixa de 2022 e do 1º turno de 2026 |
 | Brancos e nulos × Poisson, por zona | números regulares demais | igual ao 2º turno de 2022 |
 | Efeitos fixos por zona, contra 2022 | concentração em zonas | distribuições contínuas, sem zonas destoantes |
@@ -186,6 +188,22 @@ Os arquivos de log não estão no repositório.
 - **Consistência:** em {int(ur['log_dif_boletim_t2'])} seções o log tem menos votos que o boletim no 2º turno
   (provavelmente urnas substituídas durante o dia; só o log da urna totalizada foi baixado). Lista em
   `saida/urna_inconsistencias.csv`.
+
+### Boletins de urna × dados publicados
+
+O boletim de urna (BU) é o arquivo assinado que cada urna grava ao encerrar a votação, antes de qualquer transmissão,
+e que também é impresso e afixado na seção. Para as seções da amostra de logs, `urna_bu.py` lê no BU os votos para
+presidente (Lula, adversário, outros, brancos e nulos) e compara com o arquivo de votação por seção dos dados abertos,
+usado em todas as análises deste repositório.
+
+| Turno | Boletins | Batem voto a voto | Votos conferidos | Diferença absoluta |
+|---|---:|---:|---:|---:|
+{chr(10).join(f"| {t}º | {br(r.boletins, 0)} | {br(r.batem, 0)} | {br(r.votos_bu, 0)} | {br(r.dif_abs_total, 0)} |" for t, r in bu.iterrows())}
+
+Batem também todas as seções sinalizadas (comparecimento ≥ 95%, salto extremo, resultado fora da urna). Uma
+redistribuição dos totais na transmissão ou na totalização apareceria aqui como divergência; uma troca feita dentro do
+programa da urna, não, porque o BU já sairia trocado. A assinatura digital dos BUs não foi conferida. Comparação
+seção a seção em `saida/urna_bu_comparacao.csv`.
 
 ### Benford, calibrado
 
@@ -248,13 +266,15 @@ de +11 votos por seção): o comparecimento caiu entre os turnos e quem deixou d
 Flávio — em 2026 ele perdeu votos em números absolutos em AC, AP, RR, AM, TO e MA, o que não aconteceu com Bolsonaro em
 nenhum estado em 2022.
 
-**O que estes testes não alcançam:** uma troca proporcional dentro do programa da urna (voto branco gravado como Lula,
+**O que estes testes não alcançam:** a conferência dos boletins exclui redistribuição depois da urna nas seções da
+amostra, mas uma troca proporcional dentro do programa da urna (voto branco gravado como Lula,
 sem eleitor a mais) seria indistinguível do comportamento real em todos os testes acima; ela é o objeto do teste de
 integridade (votação paralela) e da auditoria do código, não de estatística sobre os dados publicados.
 """
     resumo = (f"- **Testes de integridade estatística** (impressão digital, seções extremas, modelo de urna, votos fixos "
               f"por urna, logs de biometria, Benford, Poisson e efeitos fixos por zona, calibrados com 2022) não mostram as "
               f"marcas de manipulação que detectariam; a inserção de votos sem eleitor real compatível com os logs é de no "
-              f"máximo {br(ur['insercao_maxima_pct'], 2)}% do eleitorado (ver "
+              f"máximo {br(ur['insercao_maxima_pct'], 2)}% do eleitorado, e os {br(bu.boletins.min(), 0)} boletins de urna "
+              f"conferidos batem voto a voto com os dados publicados (ver "
               f"[Testes de integridade](#testes-de-integridade-estatística)).")
     return texto, resumo

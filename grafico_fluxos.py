@@ -3,7 +3,10 @@
 Faixas claras: eleitores que mantêm a situação; faixas escuras: os que mudam, na cor do destino.
 Espessura proporcional ao número de eleitores.
 
-Uso:  python -X utf8 -E -P grafico_fluxos.py saida/ [secao|municipio]
+Com uma UF como terceiro argumento, desenha só aquele estado (a matriz da UF do modelo), em milhares de eleitores, com
+corte proporcional ao do Brasil (0,5 mi de 158,7 mi ≈ 0,32% do eleitorado).
+
+Uso:  python -X utf8 -E -P grafico_fluxos.py saida/ [secao|municipio] [UF]
 """
 import os, sys, textwrap
 import numpy as np, pandas as pd
@@ -16,6 +19,15 @@ from matplotlib.patches import PathPatch, Rectangle
 OUT = sys.argv[1] if len(sys.argv) > 1 else "saida"
 NIVEL = sys.argv[2] if len(sys.argv) > 2 else "secao"
 PREF, OBS = {"secao": ("transicao_secao", "seções eleitorais"), "municipio": ("transicao_uf", "municípios")}[NIVEL]
+UF = sys.argv[3].upper() if len(sys.argv) > 3 else None
+NOME_UF = {"AC": "Acre", "AL": "Alagoas", "AM": "Amazonas", "AP": "Amapá", "BA": "Bahia", "CE": "Ceará",
+           "DF": "Distrito Federal", "ES": "Espírito Santo", "GO": "Goiás", "MA": "Maranhão", "MG": "Minas Gerais",
+           "MS": "Mato Grosso do Sul", "MT": "Mato Grosso", "PA": "Pará", "PB": "Paraíba", "PE": "Pernambuco",
+           "PI": "Piauí", "PR": "Paraná", "RJ": "Rio de Janeiro", "RN": "Rio Grande do Norte", "RO": "Rondônia",
+           "RR": "Roraima", "RS": "Rio Grande do Sul", "SC": "Santa Catarina", "SE": "Sergipe", "SP": "São Paulo",
+           "TO": "Tocantins", "ZZ": "Exterior"}
+# unidade dos rótulos: milhões no Brasil, milhares num estado
+DIV, SUF, ND = (1e3, "mil", 0) if UF else (1e6, "mi", 1)
 
 ESQ = ["Lula", "Brancos", "Nulos", "Abstenção", "Outros", "Flávio"]   # ordem dos blocos do 1º turno
 DIR = ["Lula", "Brancos", "Nulos", "Abstenção", "Flávio"]             # ordem dos blocos do 2º turno
@@ -34,6 +46,8 @@ INK, MUTED = "#1f2328", "#6b7280"
 # O espaço deles continua reservado nos blocos, para a altura de cada bloco seguir proporcional ao total.
 MIN_DESENHO = MIN_ROTULO = 0.5e6
 MIN_LISTA = 0.1e6   # no rodapé, os omitidos abaixo disso entram só na soma
+def un(v, nd=None):
+    return f"{br(v / DIV, ND if nd is None else nd)}"
 
 def br(x, nd=1):
     return f"{x:,.{nd}f}".replace(",", "X").replace(".", ",").replace("X", ".")
@@ -57,7 +71,14 @@ def bezier(t, x0, y0, x1, y1):
     return sum(w * q[0] for w, q in zip(b, p)), sum(w * q[1] for w, q in zip(b, p))
 
 def main():
-    F = pd.read_csv(os.path.join(OUT, f"{PREF}_fluxos_brasil.csv"), index_col=0)
+    global MIN_DESENHO, MIN_ROTULO, MIN_LISTA
+    if UF:
+        m = pd.read_csv(os.path.join(OUT, f"{PREF}_matrizes.csv")).query("uf == @UF")
+        F = m.pivot(index="de", columns="para", values="eleitores").loc[ESQ, DIR[:]]
+        escala = F.to_numpy().sum() / pd.read_csv(os.path.join(OUT, f"{PREF}_fluxos_brasil.csv"), index_col=0).to_numpy().sum()
+        MIN_DESENHO = MIN_ROTULO = 0.5e6 * escala; MIN_LISTA = 0.1e6 * escala
+    else:
+        F = pd.read_csv(os.path.join(OUT, f"{PREF}_fluxos_brasil.csv"), index_col=0)
     tot1, tot2 = F.sum(axis=1), F.sum(axis=0)
     total = tot1.sum()
     gap = 0.035 * total
@@ -119,7 +140,7 @@ def main():
     ocupado = []
     for a, b, v, ym0, ym1 in sorted(rotulos, key=lambda r: (r[0] != r[1], -r[2])):
         mesmo = a == b
-        txt = f"{br(v / 1e6)} {MANTEM[b]}" if mesmo else f"{br(v / 1e6)} {MUDA[b]}"
+        txt = f"{un(v)} {MANTEM[b]}" if mesmo else f"{un(v)} {MUDA[b]}"
         for t in ([.5] if mesmo else [.5, .38, .62, .28, .72, .2, .8]):
             x, y = bezier(t, X0 + LARG, ym0, X1, ym1)
             el = ax.text(x, y, txt, ha="center", va="center", zorder=5,
@@ -151,7 +172,7 @@ def main():
         if abs(yl - yc) > .005 * altura:
             ax.plot([X0 - .004, X0 - .016], [yc, yl], color=MUTED, lw=.8)
         ax.text(X0 - .02, yl + .004 * altura, NOME[k], ha="right", va="bottom", fontsize=12, weight="bold", color=INK)
-        ax.text(X0 - .02, yl + .002 * altura, f"{br(tot1[k] / 1e6)} mi", ha="right", va="top", fontsize=19,
+        ax.text(X0 - .02, yl + .002 * altura, f"{un(tot1[k])} {SUF}", ha="right", va="top", fontsize=19,
                 weight="bold", color=COR[k])
     yd = afasta(pd_, .12 * altura)
     for k, (yt, yb) in pd_.items():
@@ -161,14 +182,14 @@ def main():
             ax.plot([X1 + LARG + .004, X1 + LARG + .016], [yc, yl], color=MUTED, lw=.8)
         saldo = tot2[k] - tot1[k]
         ax.text(X1 + LARG + .02, yl + .03 * altura, NOME[k], ha="left", va="bottom", fontsize=12, weight="bold", color=INK)
-        ax.text(X1 + LARG + .02, yl + .028 * altura, f"{br(tot2[k] / 1e6)} mi", ha="left", va="top", fontsize=19,
+        ax.text(X1 + LARG + .02, yl + .028 * altura, f"{un(tot2[k])} {SUF}", ha="left", va="top", fontsize=19,
                 weight="bold", color=COR[k])
-        ax.text(X1 + LARG + .02, yl - .022 * altura, f"{'+' if saldo > 0 else '−'}{br(abs(saldo) / 1e6)} mi no saldo",
+        ax.text(X1 + LARG + .02, yl - .022 * altura, f"{'+' if saldo > 0 else '−'}{un(abs(saldo))} {SUF} no saldo",
                 ha="left", va="top", fontsize=11, color=COR[k])
 
     topo = altura * 1.1
     ax.text(-0.33, topo, "1º TURNO", fontsize=17, weight="bold", color=INK, va="bottom")
-    ax.text(-0.33, topo, "Resultado oficial", fontsize=11, color=MUTED, va="top")
+    ax.text(-0.33, topo, "Resultado oficial" + (f" — {NOME_UF.get(UF, UF)}" if UF else ""), fontsize=11, color=MUTED, va="top")
     ax.text(1.33, topo, "2º TURNO", fontsize=17, weight="bold", color=INK, va="bottom", ha="right")
     ax.text(1.33, topo, "Estimado pelo modelo", fontsize=11, color=MUTED, va="top", ha="right")
     ax.add_patch(Rectangle((.3, topo + .003 * altura), .025, .012 * altura, color="#d9d9d9", transform=ax.transData))
@@ -180,17 +201,19 @@ def main():
     # rodapé: fluxos omitidos do desenho, do maior para o menor
     DESTINO = {"Lula": "Lula", "Flávio": "Flávio", "Brancos": "branco", "Nulos": "nulo", "Abstenção": "abstenção"}
     omit = sorted(((F.loc[a, b], a, b) for a in ESQ for b in DIR if a != b and F.loc[a, b] < MIN_DESENHO), reverse=True)
-    itens = [f"{a} {'seguem ' + DESTINO[b] if a == b else '→ ' + DESTINO[b]} {br(v / 1e6, 2)}"
+    itens = [f"{a} {'seguem ' + DESTINO[b] if a == b else '→ ' + DESTINO[b]} {un(v, None if UF else 2)}"
              for v, a, b in omit if v >= MIN_LISTA]
     resto = [v for v, a, b in omit if v < MIN_LISTA]
-    lista = " · ".join(itens) + (f" · demais {len(resto)} fluxos somam {br(sum(resto) / 1e6, 2)}" if resto else "")
-    fig.text(.012, .1, f"Mudanças menores que {br(MIN_DESENHO / 1e6, 1)} mi, não desenhadas (em mi):", fontsize=10,
+    lista = " · ".join(itens) + (f" · demais {len(resto)} fluxos somam {un(sum(resto), None if UF else 2)}" if resto else "")
+    fig.text(.012, .1, f"Mudanças menores que {un(MIN_DESENHO)} {SUF}, não desenhadas (em {SUF}):", fontsize=10,
              color=INK, weight="bold", va="top")
     fig.text(.012, .078, textwrap.fill(lista, 190), fontsize=10, color=INK, va="top", linespacing=1.5)
-    fig.text(.012, .01, f"Em milhões de eleitores. Matriz de transição estimada por inferência ecológica (uma matriz por "
-             f"estado, sobre {OBS}), somada para o Brasil. Fonte: TSE.", fontsize=9, color=MUTED)
+    fig.text(.012, .01, (f"Em milhares de eleitores. Matriz de transição de {NOME_UF.get(UF, UF)} estimada por inferência "
+             f"ecológica sobre {OBS}. Fonte: TSE." if UF else f"Em milhões de eleitores. Matriz de transição estimada por "
+             f"inferência ecológica (uma matriz por estado, sobre {OBS}), somada para o Brasil. Fonte: TSE."),
+             fontsize=9, color=MUTED)
     plt.subplots_adjust(left=.01, right=.99, top=.99, bottom=.12)
-    plt.savefig(os.path.join(OUT, f"{PREF}_fluxos.png"), dpi=130)
+    plt.savefig(os.path.join(OUT, f"{PREF}_fluxos{'_' + UF.lower() if UF else ''}.png"), dpi=130)
 
 if __name__ == "__main__":
     main()

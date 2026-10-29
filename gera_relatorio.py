@@ -473,6 +473,7 @@ python -X utf8 -E -P transicao_uf.py saida/ 200 5 municipio     # modelo por est
 python -X utf8 -E -P secao_base.py                              # baixa os dados por seção e monta a base
 python -X utf8 -E -P transicao_uf.py saida/ 200 5 secao         # modelo principal
 python -X utf8 -E -P grafico_fluxos.py saida/ secao             # diagrama de fluxos (também: municipio)
+python -X utf8 -E -P grafico_fluxos.py saida/ secao SC          # diagrama de um estado (aqui, Santa Catarina)
 python -X utf8 -E -P grafico_novos_votantes.py saida/ bruto      # ganho × eleitores novos
 python -X utf8 -E -P grafico_novos_votantes.py saida/ sem_outros # idem, sem a parcela de Outros
 python -X utf8 -E -P teste_teto_flavio.py saida/                # teste do achatamento do Flávio
@@ -486,6 +487,7 @@ python -X utf8 -E -P urna_log.py                                # lê os logs
 python -X utf8 -E -P urna_analise.py 1                          # testes com os logs
 python -X utf8 -E -P base_votacao.py 2022                       # base por seção de 2022 (baixa ~270 MB)
 python -X utf8 -E -P base_votacao.py 2026                       # mesma montagem para 2026
+python -X utf8 -E -P urna_bu.py                                 # boletins de urna × dados publicados
 python -X utf8 -E -P benford.py saida/                          # Benford calibrado
 python -X utf8 -E -P poisson_brancos_nulos.py saida/            # brancos e nulos × Poisson
 python -X utf8 -E -P fe_modelo.py saida/                        # efeitos fixos por zona, 2022 e 2026
@@ -505,12 +507,13 @@ refaz os ajustes e confere a coerência de todos os resultados publicados.
 | `transicao.py` | baixa os resultados por município do site do TSE e estima o modelo por região |
 | `transicao_uf.py` | modelo por estado (sobre municípios ou seções), agregado para o Brasil, e gráficos |
 | `secao_base.py` | baixa os dados abertos por seção e monta a base dos dois turnos |
-| `grafico_fluxos.py` | diagrama de fluxos entre os turnos a partir dos fluxos nacionais |
+| `grafico_fluxos.py` | diagrama de fluxos entre os turnos, do Brasil ou de um estado (`transicao_secao_fluxos_sc.png`: Santa Catarina) |
 | `grafico_novos_votantes.py` | ganho de cada candidato × eleitores novos, por seção (`saida/novos_votantes*`) |
 | `teste_teto_flavio.py` | teste do achatamento do Flávio por faixa de força e com controles (`saida/teste_teto_flavio*`) |
 | `estresse_regressao.py`, `coef_por_forca.py` | estresse da regressão e coeficientes em função da força do Lula (`saida/estresse_regressao*`, `saida/coef_por_forca*`) |
 | `forense.py`, `teste_fraude_constante.py` | impressão digital, seções extremas, resíduos por modelo de urna, votos fixos por urna (`saida/forense_*`, `saida/teste_fraude_constante*`) |
 | `urna_amostra.py`, `urna_baixa.py`, `urna_log.py`, `urna_analise.py` | amostra, download, leitura e testes dos logs de urna (`saida/urna_*`) |
+| `urna_bu.py` | lê os boletins de urna da amostra e compara com os dados publicados (`saida/urna_bu_*`) |
 | `base_votacao.py`, `benford.py`, `poisson_brancos_nulos.py`, `fe_modelo.py`, `fe_interceptos.py` | bases de 2022 e 2026 e os testes calibrados (`saida/votacao_*`, `saida/benford*`, `saida/poisson_*`, `saida/fe_*`) |
 | `relatorio_integridade.py` | seções do README sobre o estresse e os testes de integridade |
 | `gera_relatorio.py` | gera este README a partir de `saida/` |
